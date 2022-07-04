@@ -4,6 +4,9 @@ import org.jvnet.libpam.PAM;
 import org.jvnet.libpam.PAMException;
 import org.jvnet.libpam.UnixUser;
 
+// https://docs.oracle.com/javase/tutorial/jmx/mbeans/mxbeans.html
+
+// https://docs.oracle.com/en/java/javase/12/management/using-platform-mbean-server-and-platform-mxbeans.html#GUID-E7CCD12F-00C4-4547-B3F4-E9D969768C9E
 public class Application {
 
     public static Boolean authenticatePreconfiguredSingleUserWithPAM() {
