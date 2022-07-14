@@ -79,29 +79,7 @@ public class SocketServer {
 
                 try (InputStream is = clientSocket.getInputStream();
                      OutputStream os = clientSocket.getOutputStream()) {
-                    // TODO: new Application().interactiveShell(is, os);
-
-                    {
-                        if (DEBUG) System.out.println("Saying hello to client...");
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os));
-                        if ((allowedUserUid.isEmpty()) || (!allowedUserUid.equals(credsUid))) {
-                            if (DEBUG) System.out.println("Only one user is allowed to connect: " + allowedUserUid);
-                            writer.write("Connection refused! \n");
-                            writer.flush();
-                            this.clientSocket.close();
-                        }
-                        writer.write("Let's play a game. Give a number! \n");
-                        writer.flush();
-                        String number = reader.readLine();
-                        int num = Integer.parseInt(number);
-                        int won = num + 1;
-                        writer.write(String.format("I have number %d. I won!\n", won));
-                        writer.flush();
-
-                        writer.close();
-                        reader.close();
-                    }
+                     new Application().interactiveShell(is, os);
                 }
             } catch (IOException e) {
                 if (DEBUG) System.out.println("main loop");
