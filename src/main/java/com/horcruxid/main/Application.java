@@ -6,10 +6,14 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import org.newsclub.net.unix.AFUNIXServerSocket;
+import org.newsclub.net.unix.AFUNIXServerSocketChannel;
+import org.newsclub.net.unix.AFUNIXSocketAddress;
 
 import javax.management.MBeanServer;
-import java.io.IOException;
+import java.io.*;
 import java.lang.management.ManagementFactory;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -30,20 +34,20 @@ public class Application {
         lbs = LogManager.getLoggingMXBean();
     }
 
-    /**
-     * TODO
+    /*
+     * https://kohlschutter.github.io/junixsocket/junixsocket-demo/xref/index.html
      *
-     * This lib will be include as a compiled dep!
-     *
-     * => socat/netcat <=> junixsocket <=> PAM authn <=> jline3 <=> LoggingMXBean
+     * https://github.com/jline/jline3/wiki/LineReader
      */
 
-    // https://github.com/jline/jline3/wiki/LineReader
-    public void interactiveShell()  {
+    public void interactiveShell(InputStream in, OutputStream out)  {
+
         try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
             Terminal terminal = TerminalBuilder.builder()
                     .system(false)
-                    .streams(System.in, System.out)
+                    .streams(in, out)
                     .build();
             terminal.echo(false);
             LineReader lineReader = LineReaderBuilder.builder()
@@ -52,20 +56,24 @@ public class Application {
             String line = "";
             Boolean loop = true;
 
-            System.out.println("Usage: level [<logger name> <new level>] To Quit type 'quit'");
-            System.out.println("Levels: ALL, FINEST, FINER, FINE, CONFIG, INFO, SEVERE, OFF");
+            writer.write("Usage: level [<logger name> <new level>] To Quit type 'quit'\n");
+            writer.write("Levels: ALL, FINEST, FINER, FINE, CONFIG, INFO, SEVERE, OFF\n");
+            writer.flush();
             while (loop) {
 
                 try {
                     line = lineReader.readLine("$> ");
+
                     String[] command = line.split(" ");
                     if (command.length == 1) {
                         if (line.equals("quit")) {
                             loop = false;
                         } else if (line.equals("level")) {
-                            System.out.println(listLoggers());
+                            writer.write(listLoggers());
+                            writer.flush();
                         } else {
-                            System.out.println("error!");
+                            writer.write("error!\n");
+                            writer.flush();
                         }
                     } else if (command.length == 3 ) {
                         Boolean levelCommand = command[0].equals("level");
@@ -82,23 +90,25 @@ public class Application {
                             }
                         }
                         if (failure) {
-                            System.out.println("error!");
+                            writer.write("error!\n");
+                            writer.flush();
                         }
                     } else {
-                        System.out.println("error!");
+                        writer.write("error!\n");
+                        writer.flush();
                     }
                 } catch (UserInterruptException e) {
                     // Ignore
                 } catch (EndOfFileException e) {
-                    return;
+                    // ignore
                 }
             }
         } catch (IOException e) {
-
+            e.printStackTrace();
         }
     }
 
-    public String listLoggers() {
+    private static String listLoggers() {
         List<String> loggers = lbs.getLoggerNames();
         StringBuilder sb = new StringBuilder();
 
@@ -114,14 +124,15 @@ public class Application {
     }
 
     /**
-     * NOTE! Since this is a library that => no main method!
-     * PAM service name, username, and password are
-     * Also, NO main method therefore!
+     * NOTE! Since this is a library that => no main method! Only for testing...
+     * UNIX domain socket communication: https://blog.travismclarke.com/post/socat-tutorial/
+     * "socat UNIX-CONNECT:/tmp/change-log.sock -"
      */
-
-
     public static void main(String[] args) {
-        new Application().interactiveShell();
+        String userId = (args.length == 1) ? args[0] : "";
+
+        new SocketServer().start(userId);
     }
+
 
 }
