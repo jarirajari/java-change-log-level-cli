@@ -1,3 +1,21 @@
+/*
+        java-change-log-level-cli
+        Copyright (C) 2022 Jari Kuusisto Mäkelä
+
+        This library is free software; you can redistribute it and/or
+        modify it under the terms of the GNU Lesser General Public
+        License as published by the Free Software Foundation; either
+        version 2.1 of the License, or (at your option) any later version.
+
+        This library is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+        Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public
+        License along with this library; if not, write to the Free Software
+        Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package com.horcruxid.main;
 
 import org.jline.reader.EndOfFileException;
@@ -6,14 +24,10 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
-import org.newsclub.net.unix.AFUNIXServerSocket;
-import org.newsclub.net.unix.AFUNIXServerSocketChannel;
-import org.newsclub.net.unix.AFUNIXSocketAddress;
 
 import javax.management.MBeanServer;
 import java.io.*;
 import java.lang.management.ManagementFactory;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -126,13 +140,15 @@ public class Application {
     /**
      * NOTE! Since this is a library that => no main method! Only for testing...
      * UNIX domain socket communication: https://blog.travismclarke.com/post/socat-tutorial/
+     *
+     * How to connect from terminal? For example,
      * "socat UNIX-CONNECT:/tmp/change-log.sock -"
      */
     public static void main(String[] args) {
         String userId = (args.length == 1) ? args[0] : "";
 
-        new SocketServer().start(userId);
+        SocketServer.socketServer().start(userId);
+        //SocketServer.socketServer().stop();
     }
-
 
 }
