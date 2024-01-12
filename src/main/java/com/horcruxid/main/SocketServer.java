@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 public class SocketServer {
 
     private static Logger log = Logger.getLogger(SocketServer.class.getName());
-    private static boolean DEBUG = false;
+    private static final boolean DEBUG = false;
     private ExecutorService clientProcessingPool = Executors.newFixedThreadPool(1);
     private String allowedUserUid = "";
     private static AFUNIXServerSocket server;
@@ -65,8 +65,8 @@ public class SocketServer {
     }
 
     private Optional<File> generateSocketFile() {
-        final String filename = "change-log";
-        File socketFile = new File(new File(System.getProperty("java.io.tmpdir")), "change-log.sock");
+        final String filename = "change-log.sock";
+        File socketFile = new File(new File(System.getProperty("java.io.tmpdir")), filename);
         socketFile.deleteOnExit();
 
         return Optional.ofNullable(socketFile);

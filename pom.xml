@@ -75,14 +75,14 @@
                             <archive>
                                 <manifest>
                                     <mainClass>
-                                        org.example.main.Application
+                                        com.horcruxid.main.Application
                                     </mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
-                            <finalName>application-final</finalName>
+                            <finalName>java-change-log-level</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                     </execution>

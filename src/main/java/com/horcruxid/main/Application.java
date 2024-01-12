@@ -145,10 +145,38 @@ public class Application {
      * "socat UNIX-CONNECT:/tmp/change-log.sock -"
      */
     public static void main(String[] args) {
-        String userId = (args.length == 1) ? args[0] : "";
+        String username = (args.length == 1) ? args[0] : "";
 
-        SocketServer.socketServer().start(userId);
+        SocketServer.socketServer().start(username);
         //SocketServer.socketServer().stop();
+    }
+
+    /**
+     * How to integrate this lib?
+     * - add this library jar as a dependency
+     * - call static start method, for example  com.horcruxid.main.Application.integrationStart("jari");
+     * - call static stop method to tear down the application
+     */
+    public static boolean integrationStart(String username) {
+        boolean isUsername = username != null && username.length() > 0;
+        boolean integrated;
+
+        if (isUsername) {
+            SocketServer.socketServer().start(username);
+            integrated = true;
+        } else {
+            integrated = false;
+        }
+
+        return integrated;
+    }
+
+    public static void integrationStop() {
+        try {
+            SocketServer.socketServer().stop();
+        } catch (Exception e) {
+
+        }
     }
 
 }
